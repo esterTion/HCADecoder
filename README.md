@@ -1,3 +1,27 @@
+# HCA Decoder  
+
+Modified to make this compilable on linux (Also works under mingw/msys)  
+> g++ -std=c++11 clHCA.cpp Source.cpp -o hca  
+
+Shift-JIS characters are converted to UTF-8  
+console output not touched / translated  
+
+## Brief cli option summary:  
+`hca [options] <input file path>`  
+( Default hca key: CF222F1F E0748978 )  
+
+| Arguments | Description |  
+| --------- | ----------- |  
+| -a &lt;hca key&gt; | hca key low 4 bytes (e.g 89abcdef) |  
+| -b &lt;hca key&gt; | hca key high 4 bytes (e.g 01234567) |  
+| -o &lt;output path&gt; | Specify output wav path, default input file path with wav extension |  
+| -v &lt;volume&gt; | Specify output volume, from 0.0 to 1.0, default 1.0 |  
+| -m &lt;bit depth&gt; | Specify bit depth, default 16 |  
+| -l &lt;loop time&gt; | Specify loop times, default 0 |  
+| -i | Print track info |  
+| -c | Decrypt instead of decode to wav |  
+
+
 # HCAデコーダ
 
 # HCAファイルのデコード方法

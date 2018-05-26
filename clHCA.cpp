@@ -1,13 +1,13 @@
 
 //--------------------------------------------------
-// ƒCƒ“ƒNƒ‹[ƒh
+// ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰
 //--------------------------------------------------
 #include "clHCA.h"
 #include <stdio.h>
 #include <memory.h>
 
 //--------------------------------------------------
-// ƒCƒ“ƒ‰ƒCƒ“ŠÖ”
+// ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³é–¢æ•°
 //--------------------------------------------------
 inline short bswap(short v) { short r = v & 0xFF; r <<= 8; v >>= 8; r |= v & 0xFF; return r; }
 inline unsigned short bswap(unsigned short v) { unsigned short r = v & 0xFF; r <<= 8; v >>= 8; r |= v & 0xFF; return r; }
@@ -19,20 +19,20 @@ inline float bswap(float v) { unsigned int i = bswap(*(unsigned int *)&v); retur
 inline unsigned int ceil2(unsigned int a, unsigned int b) { return (b>0) ? (a / b + ((a%b) ? 1 : 0)) : 0; }
 
 //--------------------------------------------------
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 //--------------------------------------------------
 clHCA::clHCA(unsigned int ciphKey1, unsigned int ciphKey2) :
 	_ciph_key1(ciphKey1), _ciph_key2(ciphKey2), _ath(), _cipher() {}
 
 //--------------------------------------------------
-// HCAƒ`ƒFƒbƒN
+// HCAãƒã‚§ãƒƒã‚¯
 //--------------------------------------------------
 bool clHCA::CheckFile(void *data, unsigned int size) {
 	return (data&&size >= 4 && (*(unsigned int *)data & 0x7F7F7F7F) == 0x00414348);
 }
 
 //--------------------------------------------------
-// ƒ`ƒFƒbƒNƒTƒ€
+// ãƒã‚§ãƒƒã‚¯ã‚µãƒ 
 //--------------------------------------------------
 unsigned short clHCA::CheckSum(void *data, int size, unsigned short sum) {
 	static unsigned short v[] = {
@@ -58,34 +58,34 @@ unsigned short clHCA::CheckSum(void *data, int size, unsigned short sum) {
 }
 
 //--------------------------------------------------
-// ƒwƒbƒ_î•ñ‚ğƒRƒ“ƒ\[ƒ‹o—Í
+// ãƒ˜ãƒƒãƒ€æƒ…å ±ã‚’ã‚³ãƒ³ã‚½ãƒ¼ãƒ«å‡ºåŠ›
 //--------------------------------------------------
 bool clHCA::PrintInfo(const char *filenameHCA) {
 
-	// ƒ`ƒFƒbƒN
+	// ãƒã‚§ãƒƒã‚¯
 	if (!(filenameHCA))return false;
 
-	// HCAƒtƒ@ƒCƒ‹‚ğŠJ‚­
+	// HCAãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 	FILE *fp;
-	if (fopen_s(&fp, filenameHCA, "rb")) {
-		printf("Error: ƒtƒ@ƒCƒ‹‚ªŠJ‚¯‚Ü‚¹‚ñ‚Å‚µ‚½B\n");
+	if (fp = fopen(filenameHCA, "rb")) {
+		printf("Error: ãƒ•ã‚¡ã‚¤ãƒ«ãŒé–‹ã‘ã¾ã›ã‚“ã§ã—ãŸã€‚\n");
 		return false;
 	}
 
-	// ƒwƒbƒ_ƒ`ƒFƒbƒN
+	// ãƒ˜ãƒƒãƒ€ãƒã‚§ãƒƒã‚¯
 	stHeader header;
 	memset(&header, 0, sizeof(header));
 	fread(&header, sizeof(header), 1, fp);
 	if (!CheckFile(&header, sizeof(header))) {
-		printf("Error: HCAƒtƒ@ƒCƒ‹‚Å‚Í‚ ‚è‚Ü‚¹‚ñB\n");
+		printf("Error: HCAãƒ•ã‚¡ã‚¤ãƒ«ã§ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚\n");
 		fclose(fp); return false;
 	}
 
-	// ƒwƒbƒ_‰ğÍ
+	// ãƒ˜ãƒƒãƒ€è§£æ
 	header.dataOffset = bswap(header.dataOffset);
 	unsigned char *data = new unsigned char[header.dataOffset];
 	if (!data) {
-		printf("Error: ƒƒ‚ƒŠ•s‘«‚Å‚·B\n");
+		printf("Error: ãƒ¡ãƒ¢ãƒªä¸è¶³ã§ã™ã€‚\n");
 		fclose(fp); return false;
 	}
 	fseek(fp, 0, SEEK_SET);
@@ -94,9 +94,9 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 	unsigned char *s = (unsigned char *)data;
 	unsigned int size = header.dataOffset;
 
-	// ƒTƒCƒYƒ`ƒFƒbƒN
+	// ã‚µã‚¤ã‚ºãƒã‚§ãƒƒã‚¯
 	if (size<sizeof(stHeader)) {
-		printf("Error: ƒwƒbƒ_‚ÌƒTƒCƒY‚ª¬‚³‚·‚¬‚Ü‚·B\n");
+		printf("Error: ãƒ˜ãƒƒãƒ€ã®ã‚µã‚¤ã‚ºãŒå°ã•ã™ãã¾ã™ã€‚\n");
 		delete[] data; fclose(fp); return false;
 	}
 
@@ -105,13 +105,13 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 		stHeader *hca = (stHeader *)s; s += sizeof(stHeader);
 		_version = bswap(hca->version);
 		_dataOffset = bswap(hca->dataOffset);
-		printf("ƒR[ƒfƒbƒN: HCA\n");
-		printf("ƒo[ƒWƒ‡ƒ“: %d.%d\n", _version >> 8, _version & 0xFF);
+		printf("ã‚³ãƒ¼ãƒ‡ãƒƒã‚¯: HCA\n");
+		printf("ãƒãƒ¼ã‚¸ãƒ§ãƒ³: %d.%d\n", _version >> 8, _version & 0xFF);
 		//if(size<_dataOffset)return false;
-		if (CheckSum(hca, _dataOffset))printf("¦ ƒwƒbƒ_‚ª”j‘¹‚µ‚Ä‚¢‚Ü‚·B‰ü•Ï‚µ‚Ä‚éê‡‚à‚±‚ÌŒx‚ªo‚Ü‚·B\n");
+		if (CheckSum(hca, _dataOffset))printf("â€» ãƒ˜ãƒƒãƒ€ãŒç ´æã—ã¦ã„ã¾ã™ã€‚æ”¹å¤‰ã—ã¦ã‚‹å ´åˆã‚‚ã“ã®è­¦å‘ŠãŒå‡ºã¾ã™ã€‚\n");
 	}
 	else {
-		printf("¦ HCAƒ`ƒƒƒ“ƒN‚ª‚ ‚è‚Ü‚¹‚ñBÄ¶‚É•K—v‚Èî•ñ‚Å‚·B\n");
+		printf("â€» HCAãƒãƒ£ãƒ³ã‚¯ãŒã‚ã‚Šã¾ã›ã‚“ã€‚å†ç”Ÿã«å¿…è¦ãªæƒ…å ±ã§ã™ã€‚\n");
 	}
 
 	// fmt
@@ -123,23 +123,23 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 		_muteHeader = bswap(fmt->muteHeader);
 		_muteFooter = bswap(fmt->muteFooter);
 		switch (_channelCount) {
-		case 1:printf("ƒ`ƒƒƒ“ƒlƒ‹”: ƒ‚ƒmƒ‰ƒ‹ (1ƒ`ƒƒƒ“ƒlƒ‹)\n"); break;
-		case 2:printf("ƒ`ƒƒƒ“ƒlƒ‹”: ƒXƒeƒŒƒI (2ƒ`ƒƒƒ“ƒlƒ‹)\n"); break;
-		default:printf("ƒ`ƒƒƒ“ƒlƒ‹”: %dƒ`ƒƒƒ“ƒlƒ‹\n", _channelCount); break;
+		case 1:printf("ãƒãƒ£ãƒ³ãƒãƒ«æ•°: ãƒ¢ãƒãƒ©ãƒ« (1ãƒãƒ£ãƒ³ãƒãƒ«)\n"); break;
+		case 2:printf("ãƒãƒ£ãƒ³ãƒãƒ«æ•°: ã‚¹ãƒ†ãƒ¬ã‚ª (2ãƒãƒ£ãƒ³ãƒãƒ«)\n"); break;
+		default:printf("ãƒãƒ£ãƒ³ãƒãƒ«æ•°: %dãƒãƒ£ãƒ³ãƒãƒ«\n", _channelCount); break;
 		}
 		if (!(_channelCount >= 1 && _channelCount <= 16)) {
-			printf("¦ ƒ`ƒƒƒ“ƒlƒ‹”‚Ì”ÍˆÍ‚Í1`16‚Å‚·B\n");
+			printf("â€» ãƒãƒ£ãƒ³ãƒãƒ«æ•°ã®ç¯„å›²ã¯1ï½16ã§ã™ã€‚\n");
 		}
-		printf("ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg: %dHz\n", _samplingRate);
+		printf("ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ¬ãƒ¼ãƒˆ: %dHz\n", _samplingRate);
 		if (!(_samplingRate >= 1 && _samplingRate <= 0x7FFFFF)) {
-			printf("¦ ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg‚Ì”ÍˆÍ‚Í1`8388607(0x7FFFFF)‚Å‚·B\n");
+			printf("â€» ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ¬ãƒ¼ãƒˆã®ç¯„å›²ã¯1ï½8388607(0x7FFFFF)ã§ã™ã€‚\n");
 		}
-		printf("ƒuƒƒbƒN”: %d\n", _blockCount);
-		printf("æ“ª–³‰¹ƒuƒƒbƒN”: %d\n", (_muteHeader - 0x80) / 0x400);
-		printf("––”ö–³‰¹ƒTƒ“ƒvƒ‹”: %d\n", _muteFooter);
+		printf("ãƒ–ãƒ­ãƒƒã‚¯æ•°: %d\n", _blockCount);
+		printf("å…ˆé ­ç„¡éŸ³ãƒ–ãƒ­ãƒƒã‚¯æ•°: %d\n", (_muteHeader - 0x80) / 0x400);
+		printf("æœ«å°¾ç„¡éŸ³ã‚µãƒ³ãƒ—ãƒ«æ•°: %d\n", _muteFooter);
 	}
 	else {
-		printf("¦ fmtƒ`ƒƒƒ“ƒN‚ª‚ ‚è‚Ü‚¹‚ñBÄ¶‚É•K—v‚Èî•ñ‚Å‚·B\n");
+		printf("â€» fmtãƒãƒ£ãƒ³ã‚¯ãŒã‚ã‚Šã¾ã›ã‚“ã€‚å†ç”Ÿã«å¿…è¦ãªæƒ…å ±ã§ã™ã€‚\n");
 	}
 
 	// comp
@@ -155,20 +155,20 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 		_comp_r07 = comp->r07;
 		_comp_r08 = comp->r08;
 		unsigned int bps = _samplingRate*_blockSize / 128;
-		if (bps<1000000)printf("ƒrƒbƒgƒŒ[ƒg: %gkbps CBR (ŒÅ’èƒrƒbƒgƒŒ[ƒg)\n", bps / 1000.0f);
-		else printf("ƒrƒbƒgƒŒ[ƒg: %gMbps CBR (ŒÅ’èƒrƒbƒgƒŒ[ƒg)\n", bps / 1000000.0f);
-		printf("ƒuƒƒbƒNƒTƒCƒY: 0x%X\n", _blockSize);
+		if (bps<1000000)printf("ãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ: %gkbps CBR (å›ºå®šãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ)\n", bps / 1000.0f);
+		else printf("ãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ: %gMbps CBR (å›ºå®šãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ)\n", bps / 1000000.0f);
+		printf("ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚º: 0x%X\n", _blockSize);
 		if (!(_blockSize >= 8 && _blockSize <= 0xFFFF)) {
-			printf("¦ ƒuƒƒbƒNƒTƒCƒY‚Ì”ÍˆÍ‚Í8`65535(0xFFFF)‚Å‚·Bv1.3‚Å‚Í0‚ÅVBR‚É‚È‚é‚æ‚¤‚É‚È‚Á‚Ä‚Ü‚µ‚½‚ªAv2.0‚©‚ç”p~‚³‚ê‚½‚æ‚¤‚Å‚·B\n");
+			printf("â€» ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚ºã®ç¯„å›²ã¯8ï½65535(0xFFFF)ã§ã™ã€‚v1.3ã§ã¯0ã§VBRã«ãªã‚‹ã‚ˆã†ã«ãªã£ã¦ã¾ã—ãŸãŒã€v2.0ã‹ã‚‰å»ƒæ­¢ã•ã‚ŒãŸã‚ˆã†ã§ã™ã€‚\n");
 		}
 		printf("comp1: %d\n", _comp_r01);
 		printf("comp2: %d\n", _comp_r02);
 		if (!(_comp_r01 >= 0 && _comp_r01 <= _comp_r02&&_comp_r02 <= 0x1F)) {
-			printf("¦ comp1‚Æcomp2‚Ì”ÍˆÍ‚Í0<=comp1<=comp2<=31‚Å‚·Bv2.0Œ»İAcomp1‚Í1Acomp2‚Í15‚ÅŒÅ’è‚³‚ê‚Ä‚¢‚Ü‚·B\n");
+			printf("â€» comp1ã¨comp2ã®ç¯„å›²ã¯0<=comp1<=comp2<=31ã§ã™ã€‚v2.0ç¾åœ¨ã€comp1ã¯1ã€comp2ã¯15ã§å›ºå®šã•ã‚Œã¦ã„ã¾ã™ã€‚\n");
 		}
 		printf("comp3: %d\n", _comp_r03);
 		if (!_comp_r03) {
-			printf("¦ comp3‚Í1ˆÈã‚Ì’l‚Å‚·B\n");
+			printf("â€» comp3ã¯1ä»¥ä¸Šã®å€¤ã§ã™ã€‚\n");
 		}
 		printf("comp4: %d\n", _comp_r04);
 		printf("comp5: %d\n", _comp_r05);
@@ -190,20 +190,20 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 		_comp_r07 = _comp_r05 - _comp_r06;
 		_comp_r08 = 0;
 		unsigned int bps = _samplingRate*_blockSize / 128;
-		if (bps<1000000)printf("ƒrƒbƒgƒŒ[ƒg: %gkbps CBR (ŒÅ’èƒrƒbƒgƒŒ[ƒg)\n", bps / 1000.0f);
-		else printf("ƒrƒbƒgƒŒ[ƒg: %gMbps CBR (ŒÅ’èƒrƒbƒgƒŒ[ƒg)\n", bps / 1000000.0f);
-		printf("ƒuƒƒbƒNƒTƒCƒY: 0x%X\n", _blockSize);
+		if (bps<1000000)printf("ãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ: %gkbps CBR (å›ºå®šãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ)\n", bps / 1000.0f);
+		else printf("ãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ: %gMbps CBR (å›ºå®šãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ)\n", bps / 1000000.0f);
+		printf("ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚º: 0x%X\n", _blockSize);
 		if (!(_blockSize >= 8 && _blockSize <= 0xFFFF)) {
-			printf("¦ ƒuƒƒbƒNƒTƒCƒY‚Ì”ÍˆÍ‚Í8`65535(0xFFFF)‚Å‚·Bv1.3‚Å‚Í0‚ÅVBR‚É‚È‚é‚æ‚¤‚É‚È‚Á‚Ä‚Ü‚µ‚½‚ªAv2.0‚©‚ç”p~‚³‚ê‚½‚æ‚¤‚Å‚·B\n");
+			printf("â€» ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚ºã®ç¯„å›²ã¯8ï½65535(0xFFFF)ã§ã™ã€‚v1.3ã§ã¯0ã§VBRã«ãªã‚‹ã‚ˆã†ã«ãªã£ã¦ã¾ã—ãŸãŒã€v2.0ã‹ã‚‰å»ƒæ­¢ã•ã‚ŒãŸã‚ˆã†ã§ã™ã€‚\n");
 		}
 		printf("dec1: %d\n", _comp_r01);
 		printf("dec2: %d\n", _comp_r02);
 		if (!(_comp_r01 >= 0 && _comp_r01 <= _comp_r02&&_comp_r02 <= 0x1F)) {
-			printf("¦ dec1‚Ædec2‚Ì”ÍˆÍ‚Í0<=dec1<=dec2<=31‚Å‚·Bv2.0Œ»İAdec1‚Í1Adec2‚Í15‚ÅŒÅ’è‚³‚ê‚Ä‚¢‚Ü‚·B\n");
+			printf("â€» dec1ã¨dec2ã®ç¯„å›²ã¯0<=dec1<=dec2<=31ã§ã™ã€‚v2.0ç¾åœ¨ã€dec1ã¯1ã€dec2ã¯15ã§å›ºå®šã•ã‚Œã¦ã„ã¾ã™ã€‚\n");
 		}
 		printf("dec3: %d\n", _comp_r03);
 		if (!_comp_r03) {
-			printf("¦ dec3‚ÍÄ¶‚É1ˆÈã‚Ì’l‚ÉC³‚³‚ê‚Ü‚·B\n");
+			printf("â€» dec3ã¯å†ç”Ÿæ™‚ã«1ä»¥ä¸Šã®å€¤ã«ä¿®æ­£ã•ã‚Œã¾ã™ã€‚\n");
 		}
 		printf("dec4: %d\n", _comp_r04);
 		printf("dec5: %d\n", _comp_r05);
@@ -211,7 +211,7 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 		printf("dec7: %d\n", _comp_r07);
 	}
 	else {
-		printf("¦ compƒ`ƒƒƒ“ƒN‚Ü‚½‚Ídecƒ`ƒƒƒ“ƒN‚ª‚ ‚è‚Ü‚¹‚ñBÄ¶‚É•K—v‚Èî•ñ‚Å‚·B\n");
+		printf("â€» compãƒãƒ£ãƒ³ã‚¯ã¾ãŸã¯decãƒãƒ£ãƒ³ã‚¯ãŒã‚ã‚Šã¾ã›ã‚“ã€‚å†ç”Ÿã«å¿…è¦ãªæƒ…å ±ã§ã™ã€‚\n");
 	}
 
 	// vbr
@@ -219,13 +219,13 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 		stVBR *vbr = (stVBR *)s; s += sizeof(stVBR);
 		_vbr_r01 = bswap(vbr->r01);
 		_vbr_r02 = bswap(vbr->r02);
-		printf("ƒrƒbƒgƒŒ[ƒg: VBR (‰Â•ÏƒrƒbƒgƒŒ[ƒg) ¦v2.0‚Å”p~‚³‚ê‚Ä‚¢‚Ü‚·B\n");
+		printf("ãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ: VBR (å¯å¤‰ãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ) â€»v2.0ã§å»ƒæ­¢ã•ã‚Œã¦ã„ã¾ã™ã€‚\n");
 		if (!(_blockSize == 0)) {
-			printf("¦ comp‚Ü‚½‚Ídecƒ`ƒƒƒ“ƒN‚Å‚·‚Å‚ÉCBR‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚·B\n");
+			printf("â€» compã¾ãŸã¯decãƒãƒ£ãƒ³ã‚¯ã§ã™ã§ã«CBRãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã™ã€‚\n");
 		}
 		printf("vbr1: %d\n", _vbr_r01);
 		if (!(_vbr_r01 >= 0 && _vbr_r01 <= 0x1FF)) {
-			printf("¦ vbr1‚Ì”ÍˆÍ‚Í0`511(0x1FF)‚Å‚·B\n");
+			printf("â€» vbr1ã®ç¯„å›²ã¯0ï½511(0x1FF)ã§ã™ã€‚\n");
 		}
 		printf("vbr2: %d\n", _vbr_r02);
 	}
@@ -238,11 +238,11 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 	if ((*(unsigned int *)s & 0x7F7F7F7F) == 0x00687461) {
 		stATH *ath = (stATH *)s; s += 6;//s+=sizeof(stATH);
 		_ath_type = ath->type;
-		printf("ATHƒ^ƒCƒv:%d ¦v2.0‚©‚ç”p~‚³‚ê‚Ä‚¢‚Ü‚·B\n", _ath_type);
+		printf("ATHã‚¿ã‚¤ãƒ—:%d â€»v2.0ã‹ã‚‰å»ƒæ­¢ã•ã‚Œã¦ã„ã¾ã™ã€‚\n", _ath_type);
 	}
 	else {
 		if (_version<0x200) {
-			printf("ATHƒ^ƒCƒv:1 ¦v2.0‚©‚ç”p~‚³‚ê‚Ä‚¢‚Ü‚·B\n");
+			printf("ATHã‚¿ã‚¤ãƒ—:1 â€»v2.0ã‹ã‚‰å»ƒæ­¢ã•ã‚Œã¦ã„ã¾ã™ã€‚\n");
 		}
 	}
 
@@ -253,18 +253,18 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 		_loopEnd = bswap(loop->end);
 		_loopCount = bswap(loop->count);
 		_loop_r01 = bswap(loop->r01);
-		printf("ƒ‹[ƒvŠJnƒuƒƒbƒN: %d\n", _loopStart);
-		printf("ƒ‹[ƒvI—¹ƒuƒƒbƒN: %d\n", _loopEnd);
+		printf("ãƒ«ãƒ¼ãƒ—é–‹å§‹ãƒ–ãƒ­ãƒƒã‚¯: %d\n", _loopStart);
+		printf("ãƒ«ãƒ¼ãƒ—çµ‚äº†ãƒ–ãƒ­ãƒƒã‚¯: %d\n", _loopEnd);
 		if (!(_loopStart >= 0 && _loopStart <= _loopEnd&&_loopEnd<_blockCount)) {
-			printf("¦ ƒ‹[ƒvŠJnƒuƒƒbƒN‚Æƒ‹[ƒvI—¹ƒuƒƒbƒN‚Ì”ÍˆÍ‚ÍA0<=ƒ‹[ƒvŠJnƒuƒƒbƒN<=ƒ‹[ƒvI—¹ƒuƒƒbƒN<ƒuƒƒbƒN” ‚Å‚·B\n");
+			printf("â€» ãƒ«ãƒ¼ãƒ—é–‹å§‹ãƒ–ãƒ­ãƒƒã‚¯ã¨ãƒ«ãƒ¼ãƒ—çµ‚äº†ãƒ–ãƒ­ãƒƒã‚¯ã®ç¯„å›²ã¯ã€0<=ãƒ«ãƒ¼ãƒ—é–‹å§‹ãƒ–ãƒ­ãƒƒã‚¯<=ãƒ«ãƒ¼ãƒ—çµ‚äº†ãƒ–ãƒ­ãƒƒã‚¯<ãƒ–ãƒ­ãƒƒã‚¯æ•° ã§ã™ã€‚\n");
 		}
 		if (_loopCount == 0x80) {
-			printf("ƒ‹[ƒv‰ñ”: –³ŒÀƒ‹[ƒv\n");
+			printf("ãƒ«ãƒ¼ãƒ—å›æ•°: ç„¡é™ãƒ«ãƒ¼ãƒ—\n");
 		}
 		else {
-			printf("ƒ‹[ƒv‰ñ”: %d‰ñ\n", _loopCount);
+			printf("ãƒ«ãƒ¼ãƒ—å›æ•°: %då›\n", _loopCount);
 		}
-		printf("ƒ‹[ƒvî•ñ1: %d\n", _loop_r01);
+		printf("ãƒ«ãƒ¼ãƒ—æƒ…å ±1: %d\n", _loop_r01);
 	}
 
 	// ciph
@@ -272,13 +272,13 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 		stCipher *ciph = (stCipher *)s; s += 6;//s+=sizeof(stCipher);
 		_ciph_type = bswap(ciph->type);
 		switch (_ciph_type) {
-		case 0:printf("ˆÃ†‰»ƒ^ƒCƒv: ‚È‚µ\n"); break;
-		case 1:printf("ˆÃ†‰»ƒ^ƒCƒv: Œ®–³‚µˆÃ†‰»\n"); break;
-		case 0x38:printf("ˆÃ†‰»ƒ^ƒCƒv: Œ®—L‚èˆÃ†‰» ¦³‚µ‚¢Œ®‚ğg‚í‚È‚¢‚Æo—Í”gŒ`‚ª‚¨‚©‚µ‚­‚È‚è‚Ü‚·B\n"); break;
-		default:printf("ˆÃ†‰»ƒ^ƒCƒv: %d\n", _ciph_type); break;
+		case 0:printf("æš—å·åŒ–ã‚¿ã‚¤ãƒ—: ãªã—\n"); break;
+		case 1:printf("æš—å·åŒ–ã‚¿ã‚¤ãƒ—: éµç„¡ã—æš—å·åŒ–\n"); break;
+		case 0x38:printf("æš—å·åŒ–ã‚¿ã‚¤ãƒ—: éµæœ‰ã‚Šæš—å·åŒ– â€»æ­£ã—ã„éµã‚’ä½¿ã‚ãªã„ã¨å‡ºåŠ›æ³¢å½¢ãŒãŠã‹ã—ããªã‚Šã¾ã™ã€‚\n"); break;
+		default:printf("æš—å·åŒ–ã‚¿ã‚¤ãƒ—: %d\n", _ciph_type); break;
 		}
 		if (!(_ciph_type == 0 || _ciph_type == 1 || _ciph_type == 0x38)) {
-			printf("¦ ‚±‚ÌˆÃ†‰»ƒ^ƒCƒv‚ÍAv2.0Œ»İÄ¶‚Å‚«‚Ü‚¹‚ñB\n");
+			printf("â€» ã“ã®æš—å·åŒ–ã‚¿ã‚¤ãƒ—ã¯ã€v2.0ç¾åœ¨å†ç”Ÿã§ãã¾ã›ã‚“ã€‚\n");
 		}
 	}
 
@@ -286,7 +286,7 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 	if ((*(unsigned int *)s & 0x7F7F7F7F) == 0x00617672) {
 		stRVA *rva = (stRVA *)s; s += sizeof(stRVA);
 		_rva_volume = bswap(rva->volume);
-		printf("‘Š‘Îƒ{ƒŠƒ…[ƒ€’²ß: %g”{\n", _rva_volume);
+		printf("ç›¸å¯¾ãƒœãƒªãƒ¥ãƒ¼ãƒ èª¿ç¯€: %gå€\n", _rva_volume);
 	}
 
 	// comm
@@ -294,36 +294,36 @@ bool clHCA::PrintInfo(const char *filenameHCA) {
 		stComment *comm = (stComment *)s; s += 5;//s+=sizeof(stComment);
 		_comm_len = comm->len;
 		_comm_comment = (char *)s;
-		printf("ƒRƒƒ“ƒg: %s\n", _comm_comment);
+		printf("ã‚³ãƒ¡ãƒ³ãƒˆ: %s\n", _comm_comment);
 	}
 
 	delete[] data;
 
-	// •Â‚¶‚é
+	// é–‰ã˜ã‚‹
 	fclose(fp);
 
 	return true;
 }
 
 //--------------------------------------------------
-// •œ†‰»
+// å¾©å·åŒ–
 //--------------------------------------------------
 bool clHCA::Decrypt(const char *filenameHCA) {
 
-	// ƒ`ƒFƒbƒN
+	// ãƒã‚§ãƒƒã‚¯
 	if (!(filenameHCA))return false;
 
-	// HCAƒtƒ@ƒCƒ‹‚ğŠJ‚­
+	// HCAãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 	FILE *fp;
-	if (fopen_s(&fp, filenameHCA, "r+b"))return false;
+	if (fp = fopen(filenameHCA, "r+b"))return false;
 
-	// ƒwƒbƒ_ƒ`ƒFƒbƒN
+	// ãƒ˜ãƒƒãƒ€ãƒã‚§ãƒƒã‚¯
 	stHeader header;
 	memset(&header, 0, sizeof(header));
 	fread(&header, sizeof(header), 1, fp);
 	if (!CheckFile(&header, sizeof(header))) { fclose(fp); return false; }
 
-	// ƒwƒbƒ_‰ğÍ
+	// ãƒ˜ãƒƒãƒ€è§£æ
 	header.dataOffset = bswap(header.dataOffset);
 	unsigned char *data = new unsigned char[header.dataOffset];
 	if (!data) { fclose(fp); return false; }
@@ -333,7 +333,7 @@ bool clHCA::Decrypt(const char *filenameHCA) {
 	unsigned char *s = (unsigned char *)data;
 	unsigned int size = header.dataOffset;
 
-	// ƒTƒCƒYƒ`ƒFƒbƒN
+	// ã‚µã‚¤ã‚ºãƒã‚§ãƒƒã‚¯
 	if (size<sizeof(stHeader)) { delete[] data; fclose(fp); return false; }
 
 	// HCA
@@ -425,19 +425,19 @@ bool clHCA::Decrypt(const char *filenameHCA) {
 		pad->pad &= 0x7F7F7F7F;
 	}
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	if (!_ath.Init(_ath_type, _samplingRate)) { delete[] data; fclose(fp); return false; }
 	if (!_cipher.Init(_ciph_type, _ciph_key1, _ciph_key2)) { delete[] data; fclose(fp); return false; }
 	unsigned char *data2 = new unsigned char[_blockSize];
 	if (!data2) { delete[] data; fclose(fp); return false; }
 
-	// ƒwƒbƒ_‚ğ‘‚«‚İ
+	// ãƒ˜ãƒƒãƒ€ã‚’æ›¸ãè¾¼ã¿
 	*(unsigned short *)&data[size - 2] = bswap(CheckSum(data, size - 2));
 	fseek(fp, 0, SEEK_SET);
 	fwrite(data, size, 1, fp);
 	delete[] data;
 
-	// ƒuƒƒbƒNƒf[ƒ^‚ğ•œ†‰»
+	// ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã‚’å¾©å·åŒ–
 	if (_ciph_type != 0) {
 		for (unsigned int i = 0, a = size; i<_blockCount; i++, a += _blockSize) {
 			fseek(fp, a, SEEK_SET);
@@ -450,48 +450,48 @@ bool clHCA::Decrypt(const char *filenameHCA) {
 	}
 	delete[] data2;
 
-	// •Â‚¶‚é
+	// é–‰ã˜ã‚‹
 	fclose(fp);
 
 	return true;
 }
 
 //--------------------------------------------------
-// ƒfƒR[ƒh‚µ‚ÄWAVEƒtƒ@ƒCƒ‹‚É•Û‘¶
+// ãƒ‡ã‚³ãƒ¼ãƒ‰ã—ã¦WAVEãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜
 //--------------------------------------------------
 bool clHCA::DecodeToWavefile(const char *filenameHCA, const char *filenameWAV, float volume, int mode, int loop) {
 
-	// ƒ`ƒFƒbƒN
+	// ãƒã‚§ãƒƒã‚¯
 	if (!(filenameHCA))return false;
 
-	// HCAƒtƒ@ƒCƒ‹‚ğŠJ‚­
+	// HCAãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 	FILE *fp;
-	if (fopen_s(&fp, filenameHCA, "rb"))return false;
+	if (fp = fopen(filenameHCA, "rb"))return false;
 
-	// •Û‘¶
+	// ä¿å­˜
 	if (!DecodeToWavefileStream(fp, filenameWAV, volume, mode, loop)) { fclose(fp); return false; }
 
-	// •Â‚¶‚é
+	// é–‰ã˜ã‚‹
 	fclose(fp);
 
 	return true;
 }
 bool clHCA::DecodeToWavefileStream(void *fpHCA, const char *filenameWAV, float volume, int mode, int loop) {
 
-	// ƒ`ƒFƒbƒN
+	// ãƒã‚§ãƒƒã‚¯
 	if (!(fpHCA&&filenameWAV && (mode == 0 || mode == 8 || mode == 16 || mode == 24 || mode == 32) && loop >= 0))return false;
 
 	// 
 	FILE *fp1 = (FILE *)fpHCA;
 	unsigned int address = ftell(fp1);
 
-	// ƒwƒbƒ_ƒ`ƒFƒbƒN
+	// ãƒ˜ãƒƒãƒ€ãƒã‚§ãƒƒã‚¯
 	stHeader header;
 	memset(&header, 0, sizeof(header));
 	fread(&header, sizeof(header), 1, fp1);
 	if (!CheckFile(&header, sizeof(header)))return false;
 
-	// ƒwƒbƒ_‰ğÍ
+	// ãƒ˜ãƒƒãƒ€è§£æ
 	header.dataOffset = bswap(header.dataOffset);
 	unsigned char *data1 = new unsigned char[header.dataOffset];
 	if (!data1) { fclose(fp1); return false; }
@@ -499,11 +499,11 @@ bool clHCA::DecodeToWavefileStream(void *fpHCA, const char *filenameWAV, float v
 	fread(data1, header.dataOffset, 1, fp1);
 	if (!Decode(data1, header.dataOffset, 0)) { delete[] data1; return false; }
 
-	// WAVEƒtƒ@ƒCƒ‹‚ğŠJ‚­
+	// WAVEãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 	FILE *fp2;
-	if (fopen_s(&fp2, filenameWAV, "wb")) { delete[] data1; return false; }
+	if (fp2 = fopen(filenameWAV, "wb")) { delete[] data1; return false; }
 
-	// WAVEƒwƒbƒ_‚ğ‘‚«‚İ
+	// WAVEãƒ˜ãƒƒãƒ€ã‚’æ›¸ãè¾¼ã¿
 	struct stWAVEHeader {
 		char riff[4];
 		unsigned int riffSize;
@@ -553,13 +553,13 @@ bool clHCA::DecodeToWavefileStream(void *fpHCA, const char *filenameWAV, float v
 	wavRiff.fmtSamplesPerSec = wavRiff.fmtSamplingRate*wavRiff.fmtSamplingSize;
 	if (_loopFlg) {
 		wavSmpl.samplePeriod = (unsigned int)(1 / (double)wavRiff.fmtSamplingRate * 1000000000);
-		wavSmpl.loop_Start = _loopStart * 0x80 * 8 + _muteFooter;//¦ŒvZ•û–@•s–¾
-		wavSmpl.loop_End = (_loopEnd + 1) * 0x80 * 8 - 1;//¦ŒvZ•û–@•s–¾
+		wavSmpl.loop_Start = _loopStart * 0x80 * 8 + _muteFooter;//â€»è¨ˆç®—æ–¹æ³•ä¸æ˜
+		wavSmpl.loop_End = (_loopEnd + 1) * 0x80 * 8 - 1;//â€»è¨ˆç®—æ–¹æ³•ä¸æ˜
 		wavSmpl.loop_PlayCount = (_loopCount == 0x80) ? 0 : _loopCount;
 	}
 	else if (loop) {
 		wavSmpl.loop_Start = 0;
-		wavSmpl.loop_End = (_blockCount + 1) * 0x80 * 8 - 1;//¦ŒvZ•û–@•s–¾
+		wavSmpl.loop_End = (_blockCount + 1) * 0x80 * 8 - 1;//â€»è¨ˆç®—æ–¹æ³•ä¸æ˜
 		_loopStart = 0;
 		_loopEnd = _blockCount;
 	}
@@ -579,17 +579,17 @@ bool clHCA::DecodeToWavefileStream(void *fpHCA, const char *filenameWAV, float v
 	}
 	fwrite(&wavData, sizeof(wavData), 1, fp2);
 
-	// ‘Š‘Îƒ{ƒŠƒ…[ƒ€‚ğ’²ß
+	// ç›¸å¯¾ãƒœãƒªãƒ¥ãƒ¼ãƒ ã‚’èª¿ç¯€
 	_rva_volume *= volume;
 
-	// ƒfƒR[ƒh
-	void *modeFunction = DecodeToWavefile_DecodeMode16bit;
+	// ãƒ‡ã‚³ãƒ¼ãƒ‰
+	void *modeFunction = (void*)DecodeToWavefile_DecodeMode16bit;
 	switch (mode) {
-	case 0:modeFunction = DecodeToWavefile_DecodeModeFloat; break;
-	case 8:modeFunction = DecodeToWavefile_DecodeMode8bit; break;
-	case 16:modeFunction = DecodeToWavefile_DecodeMode16bit; break;
-	case 24:modeFunction = DecodeToWavefile_DecodeMode24bit; break;
-	case 32:modeFunction = DecodeToWavefile_DecodeMode32bit; break;
+	case 0:modeFunction = (void*)DecodeToWavefile_DecodeModeFloat; break;
+	case 8:modeFunction = (void*)DecodeToWavefile_DecodeMode8bit; break;
+	case 16:modeFunction = (void*)DecodeToWavefile_DecodeMode16bit; break;
+	case 24:modeFunction = (void*)DecodeToWavefile_DecodeMode24bit; break;
+	case 32:modeFunction = (void*)DecodeToWavefile_DecodeMode32bit; break;
 	}
 	unsigned char *data2 = new unsigned char[_blockSize];
 	if (!data2) { delete[] data1; fclose(fp2); return false; }
@@ -608,7 +608,7 @@ bool clHCA::DecodeToWavefileStream(void *fpHCA, const char *filenameWAV, float v
 	delete[] data2;
 	delete[] data1;
 
-	// •Â‚¶‚é
+	// é–‰ã˜ã‚‹
 	fclose(fp2);
 
 	return true;
@@ -639,35 +639,35 @@ void clHCA::DecodeToWavefile_DecodeMode24bit(float f, void *fp) { int v = (int)(
 void clHCA::DecodeToWavefile_DecodeMode32bit(float f, void *fp) { int v = (int)(f * 0x7FFFFFFF); fwrite(&v, 4, 1, (FILE *)fp); }
 
 //--------------------------------------------------
-// ƒGƒ“ƒR[ƒh‚µ‚ÄHCAƒtƒ@ƒCƒ‹‚É•Û‘¶
+// ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã—ã¦HCAãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜
 //--------------------------------------------------
 /*bool clHCA::EncodeFromWavefile(const char *filenameWAV,const char *filenameHCA,float volume){
 
-// ƒ`ƒFƒbƒN
+// ãƒã‚§ãƒƒã‚¯
 if(!(filenameWAV))return false;
 
-// WAVƒtƒ@ƒCƒ‹‚ğŠJ‚­
+// WAVãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 FILE *fp;
 if(fopen_s(&fp,filenameWAV,"rb"))return false;
 
-// •Û‘¶
+// ä¿å­˜
 if(!EncodeFromWavefileStream(fp,filenameHCA,volume)){fclose(fp);return false;}
 
-// •Â‚¶‚é
+// é–‰ã˜ã‚‹
 fclose(fp);
 
 return true;
 }
 bool clHCA::EncodeFromWavefileStream(void *fpWAV,const char *filenameHCA,float volume){
 
-// ƒ`ƒFƒbƒN
+// ãƒã‚§ãƒƒã‚¯
 if(!(fpWAV&&filenameHCA))return false;
 
 //
 FILE *fp1=(FILE *)fpWAV;
 unsigned int address=ftell(fp1);
 
-// ƒwƒbƒ_ƒ`ƒFƒbƒN
+// ãƒ˜ãƒƒãƒ€ãƒã‚§ãƒƒã‚¯
 struct stWAVEHeader{
 unsigned int riff;
 unsigned int riffSize;
@@ -763,7 +763,7 @@ void clHCA::clATH::Init1(unsigned int key) {
 }
 
 //--------------------------------------------------
-// ˆÃ†‰»ƒe[ƒuƒ‹
+// æš—å·åŒ–ãƒ†ãƒ¼ãƒ–ãƒ«
 //--------------------------------------------------
 clHCA::clCipher::clCipher() { Init0(); }
 bool clHCA::clCipher::Init(int type, unsigned int key1, unsigned int key2) {
@@ -793,7 +793,7 @@ void clHCA::clCipher::Init1(void) {
 }
 void clHCA::clCipher::Init56(unsigned int key1, unsigned int key2) {
 
-	// ƒe[ƒuƒ‹1‚ğ¶¬
+	// ãƒ†ãƒ¼ãƒ–ãƒ«1ã‚’ç”Ÿæˆ
 	unsigned char t1[8];
 	if (!key1)key2--;
 	key1--;
@@ -803,7 +803,7 @@ void clHCA::clCipher::Init56(unsigned int key1, unsigned int key2) {
 		key2 >>= 8;
 	}
 
-	// ƒe[ƒuƒ‹2
+	// ãƒ†ãƒ¼ãƒ–ãƒ«2
 	unsigned char t2[0x10] = {
 		t1[1],t1[1] ^ t1[6],
 		t1[2] ^ t1[3],t1[2],
@@ -815,7 +815,7 @@ void clHCA::clCipher::Init56(unsigned int key1, unsigned int key2) {
 		t1[6] ^ t1[1],t1[6],
 	};
 
-	// ƒe[ƒuƒ‹3
+	// ãƒ†ãƒ¼ãƒ–ãƒ«3
 	unsigned char t3[0x100], t31[0x10], t32[0x10], *t = t3;
 	Init56_CreateTable(t31, t1[0]);
 	for (int i = 0; i<0x10; i++) {
@@ -826,7 +826,7 @@ void clHCA::clCipher::Init56(unsigned int key1, unsigned int key2) {
 		}
 	}
 
-	// CIPHƒe[ƒuƒ‹
+	// CIPHãƒ†ãƒ¼ãƒ–ãƒ«
 	t = &_table[1];
 	for (int i = 0, v = 0; i<0x100; i++) {
 		v = (v + 0x11) & 0xFF;
@@ -848,7 +848,7 @@ void clHCA::clCipher::Init56_CreateTable(unsigned char *r, unsigned char key) {
 }
 
 //--------------------------------------------------
-// ƒf[ƒ^
+// ãƒ‡ãƒ¼ã‚¿
 //--------------------------------------------------
 clHCA::clData::clData(void *data, int size) :_data((unsigned char *)data), _size(size * 8 - 16), _bit(0) {}
 int clHCA::clData::CheckBit(int bitSize) {
@@ -872,18 +872,18 @@ void clHCA::clData::AddBit(int bitSize) {
 }
 
 //--------------------------------------------------
-// ƒfƒR[ƒh
+// ãƒ‡ã‚³ãƒ¼ãƒ‰
 //--------------------------------------------------
 bool clHCA::Decode(void *data, unsigned int size, unsigned int address) {
 
-	// ƒ`ƒFƒbƒN
+	// ãƒã‚§ãƒƒã‚¯
 	if (!(data))return false;
 
-	// ƒwƒbƒ_
+	// ãƒ˜ãƒƒãƒ€
 	if (address == 0) {
 		unsigned char *s = (unsigned char *)data;
 
-		// ƒTƒCƒYƒ`ƒFƒbƒN
+		// ã‚µã‚¤ã‚ºãƒã‚§ãƒƒã‚¯
 		if (size<sizeof(stHeader))return false;
 
 		// HCA
@@ -891,9 +891,9 @@ bool clHCA::Decode(void *data, unsigned int size, unsigned int address) {
 			stHeader *hca = (stHeader *)s; s += sizeof(stHeader);
 			_version = bswap(hca->version);
 			_dataOffset = bswap(hca->dataOffset);
-			//if(!(_version<=0x200&&_version>0x101))return false; // ƒo[ƒWƒ‡ƒ“ƒ`ƒFƒbƒN(–³Œø)
+			//if(!(_version<=0x200&&_version>0x101))return false; // ãƒãƒ¼ã‚¸ãƒ§ãƒ³ãƒã‚§ãƒƒã‚¯(ç„¡åŠ¹)
 			if (size<_dataOffset)return false;
-			//if(CheckSum(hca,_dataOffset))return false; // ƒwƒbƒ_‚Ì”j‘¹ƒ`ƒFƒbƒN(ƒwƒbƒ_‰ü•Ï‚ğ—LŒø‚É‚·‚é‚½‚ß”j‘¹ƒ`ƒFƒbƒN–³Œø)
+			//if(CheckSum(hca,_dataOffset))return false; // ãƒ˜ãƒƒãƒ€ã®ç ´æãƒã‚§ãƒƒã‚¯(ãƒ˜ãƒƒãƒ€æ”¹å¤‰ã‚’æœ‰åŠ¹ã«ã™ã‚‹ãŸã‚ç ´æãƒã‚§ãƒƒã‚¯ç„¡åŠ¹)
 		}
 		else {
 			return false;
@@ -968,7 +968,7 @@ bool clHCA::Decode(void *data, unsigned int size, unsigned int address) {
 			_ath_type = ath->type;
 		}
 		else {
-			_ath_type = (_version<0x200) ? 1 : 0;//v1.3‚Å‚ÍƒfƒtƒHƒ‹ƒg’l‚ª1‚É‚È‚Á‚Ä‚½‚ªAv2.0‚©‚çATHƒe[ƒuƒ‹‚ª”p~‚³‚ê‚Ä‚é‚İ‚½‚¢‚È‚Ì‚Å0‚É
+			_ath_type = (_version<0x200) ? 1 : 0;//v1.3ã§ã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤ãŒ1ã«ãªã£ã¦ãŸãŒã€v2.0ã‹ã‚‰ATHãƒ†ãƒ¼ãƒ–ãƒ«ãŒå»ƒæ­¢ã•ã‚Œã¦ã‚‹ã¿ãŸã„ãªã®ã§0ã«
 		}
 
 		// loop
@@ -1019,14 +1019,14 @@ bool clHCA::Decode(void *data, unsigned int size, unsigned int address) {
 			_comm_comment = NULL;
 		}
 
-		// ‰Šú‰»
+		// åˆæœŸåŒ–
 		if (!_ath.Init(_ath_type, _samplingRate))return false;
 		if (!_cipher.Init(_ciph_type, _ciph_key1, _ciph_key2))return false;
 
-		// ’lƒ`ƒFƒbƒN(ƒwƒbƒ_‚Ì‰ü•Ïƒ~ƒX‚É‚æ‚éƒGƒ‰[‚ğ‰ñ”ğ‚·‚é‚½‚ß)
-		if (!_comp_r03)_comp_r03 = 1;//0‚Å‚ÌœZ‚ğ–h‚®‚½‚ß
+		// å€¤ãƒã‚§ãƒƒã‚¯(ãƒ˜ãƒƒãƒ€ã®æ”¹å¤‰ãƒŸã‚¹ã«ã‚ˆã‚‹ã‚¨ãƒ©ãƒ¼ã‚’å›é¿ã™ã‚‹ãŸã‚)
+		if (!_comp_r03)_comp_r03 = 1;//0ã§ã®é™¤ç®—ã‚’é˜²ããŸã‚
 
-																 // ƒfƒR[ƒh€”õ
+																 // ãƒ‡ã‚³ãƒ¼ãƒ‰æº–å‚™
 		memset(_channel, 0, sizeof(_channel));
 		if (!(_comp_r01 == 1 && _comp_r02 == 15))return false;
 		_comp_r09 = ceil2(_comp_r05 - (_comp_r06 + _comp_r07), _comp_r08);
@@ -1054,14 +1054,14 @@ bool clHCA::Decode(void *data, unsigned int size, unsigned int address) {
 
 	}
 
-	// ƒuƒƒbƒNƒf[ƒ^
+	// ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿
 	else if (address >= _dataOffset) {
 		if (size<_blockSize)return false;
 		if (CheckSum(data, _blockSize))return false;
 //		if(((unsigned char *)data)[_blockSize-2]==0x5E)_asm int 3
 		_cipher.Mask(data, _blockSize);
 		clData d(data, _blockSize);
-		int magic = d.GetBit(16);//0xFFFFŒÅ’è
+		int magic = d.GetBit(16);//0xFFFFå›ºå®š
 		if (magic == 0xFFFF) {
 			int a = (d.GetBit(9) << 8) - d.GetBit(7);
 			for (unsigned int i = 0; i<_channelCount; i++)_channel[i].Decode1(&d, _comp_r09, a, _ath.GetTable());
@@ -1078,8 +1078,8 @@ bool clHCA::Decode(void *data, unsigned int size, unsigned int address) {
 }
 
 //--------------------------------------------------
-// ƒfƒR[ƒh‘æˆê’iŠK
-//   ƒx[ƒXƒf[ƒ^‚Ì“Ç‚İ‚İ
+// ãƒ‡ã‚³ãƒ¼ãƒ‰ç¬¬ä¸€æ®µéš
+//   ãƒ™ãƒ¼ã‚¹ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿
 //--------------------------------------------------
 void clHCA::stChannel::Decode1(clData *data, unsigned int a, int b, unsigned char *ath) {
 	static unsigned char scalelist[] = {
@@ -1157,8 +1157,8 @@ void clHCA::stChannel::Decode1(clData *data, unsigned int a, int b, unsigned cha
 }
 
 //--------------------------------------------------
-// ƒfƒR[ƒh‘æ“ñ’iŠK
-//   ƒuƒƒbƒNƒf[ƒ^‚Ì“Ç‚İ‚İ
+// ãƒ‡ã‚³ãƒ¼ãƒ‰ç¬¬äºŒæ®µéš
+//   ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿
 //--------------------------------------------------
 void clHCA::stChannel::Decode2(clData *data) {
 	static char list1[] = {
@@ -1205,8 +1205,8 @@ void clHCA::stChannel::Decode2(clData *data) {
 }
 
 //--------------------------------------------------
-// ƒfƒR[ƒh‘æO’iŠK
-//   ƒuƒƒbƒNƒf[ƒ^C³‚»‚Ì‚P ¦v2.0‚©‚ç’Ç‰Á
+// ãƒ‡ã‚³ãƒ¼ãƒ‰ç¬¬ä¸‰æ®µéš
+//   ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ä¿®æ­£ãã®ï¼‘ â€»v2.0ã‹ã‚‰è¿½åŠ 
 //--------------------------------------------------
 void clHCA::stChannel::Decode3(unsigned int a, unsigned int b, unsigned int c, unsigned int d) {
 	if (type != 2 && b>0) {
@@ -1242,8 +1242,8 @@ void clHCA::stChannel::Decode3(unsigned int a, unsigned int b, unsigned int c, u
 }
 
 //--------------------------------------------------
-// ƒfƒR[ƒh‘æl’iŠK
-//   ƒuƒƒbƒNƒf[ƒ^C³‚»‚Ì‚Q
+// ãƒ‡ã‚³ãƒ¼ãƒ‰ç¬¬å››æ®µéš
+//   ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ä¿®æ­£ãã®ï¼’
 //--------------------------------------------------
 void clHCA::stChannel::Decode4(int index, unsigned int a, unsigned int b, unsigned int c) {
 	if (type == 1 && c) {
@@ -1263,8 +1263,8 @@ void clHCA::stChannel::Decode4(int index, unsigned int a, unsigned int b, unsign
 }
 
 //--------------------------------------------------
-// ƒfƒR[ƒh‘æŒÜ’iŠK
-//   ”gŒ`ƒf[ƒ^‚ğ¶¬
+// ãƒ‡ã‚³ãƒ¼ãƒ‰ç¬¬äº”æ®µéš
+//   æ³¢å½¢ãƒ‡ãƒ¼ã‚¿ã‚’ç”Ÿæˆ
 //--------------------------------------------------
 void clHCA::stChannel::Decode5(int index) {
 	static unsigned int list1Int[7][0x40] = {
